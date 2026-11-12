@@ -4,7 +4,7 @@ Posts one item a day to Instagram (@margotdayzero) at about 10 a.m. US Eastern, 
 
 ## How it works
 - `queue.json` is the list of posts in order (30 right now: 26 carousels and 4 Reels). Each day the next one goes out.
-- `media/` holds the images (JPEG) and Reels (MP4). GitHub serves them to Instagram.
+- `media/` holds the images (JPEG) and Reels (MP4). GitHub Pages serves them to Instagram (https://margotdayzero.github.io/dayzero-content). After adding new media, wait a couple of minutes before it is needed.
 - `state/posted.json` remembers what already went out, so nothing posts twice.
 - `scripts/check_content.py` is a safety check that runs before every post. It blocks a post if it is missing "not financial advice", makes income claims, uses wording you told me to avoid, or has a bad file.
 - Three automatic jobs live in `.github/workflows/`: post daily, renew the Instagram token twice a month, and check the queue whenever it changes.
