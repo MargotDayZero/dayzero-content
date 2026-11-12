@@ -1,0 +1,37 @@
+name: Post to Instagram daily
+on:
+  schedule:
+    - cron: "0 15 * * *"   # 15:00 UTC = 10 or 11 a.m. US Eastern
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: "Dry run (print what would be posted, post nothing)"
+        type: boolean
+        default: true
+concurrency:
+  group: instagram-post
+  cancel-in-progress: false
+permissions:
+  contents: write
+jobs:
+  post:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Safety check on the whole queue
+        run: python3 scripts/check_content.py
+      - name: Publish the next post
+        env:
+          IG_ACCESS_TOKEN: ${{ secrets.IG_ACCESS_TOKEN }}
+          IG_USER_ID: ${{ vars.IG_USER_ID }}
+          DRY_RUN: ${{ github.event_name == 'workflow_dispatch' && inputs.dry_run && '1' || '0' }}
+        run: python3 scripts/publish_next.py
+      - name: Save what was posted
+        if: always()
+        run: |
+          git config user.name "margot-autoposter"
+          git config user.email "actions@users.noreply.github.com"
+          git add state/posted.json
+          git diff --cached --quiet || (git commit -m "Record today's post" && git pull --rebase && git push)
+      - name: Warn if the queue is running low
+        run: python3 scripts/queue_status.py 5
