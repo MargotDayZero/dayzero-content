@@ -7,7 +7,7 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import check_content
 
 ROOT = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..")
-API = "https://graph.instagram.com/v23.0"
+API = os.environ.get("IG_API_BASE") or "https://graph.instagram.com/v23.0"
 DRY = os.environ.get("DRY_RUN") == "1"
 TOKEN = os.environ.get("IG_ACCESS_TOKEN", "")
 IG_ID = os.environ.get("IG_USER_ID", "me")
